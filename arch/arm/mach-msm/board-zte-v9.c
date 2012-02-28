@@ -1210,6 +1210,11 @@ static struct i2c_board_info i2c_devices[] = {
 		.addr = 0x1d,
 	},
 #endif
+#ifdef CONFIG_SENSORS_AKM8962
+	{
+		I2C_BOARD_INFO("akm8962", 0x0c),
+	},
+#endif
 #ifdef CONFIG_SENSORS_AK8973
 	{
 		I2C_BOARD_INFO("akm8973", 0x1c),
@@ -1358,7 +1363,13 @@ static struct i2c_board_info i2c_devices[] = {
 		.irq          = MSM_GPIO_TO_INT(29),
 	},
 #endif
-	
+
+#ifdef CONFIG_HI704
+	{
+		I2C_BOARD_INFO("hi704", 0x60 >> 1),
+	},
+#endif
+
 #ifdef CONFIG_TOUCHSCREEN_MXT224
 	{
 		I2C_BOARD_INFO(ATMEL_QT602240_NAME, 0x4a ),
@@ -1366,7 +1377,7 @@ static struct i2c_board_info i2c_devices[] = {
 		.irq = MSM_GPIO_TO_INT(42),
 	},
 #endif
-	
+
 };
 
 
@@ -1961,6 +1972,30 @@ static struct platform_device msm_camera_sensor_mt9p012 = {
 };
 #endif
 
+#ifdef CONFIG_HI704
+static struct msm_camera_sensor_flash_data flash_hi704 = {
+	.flash_type = MSM_CAMERA_FLASH_NONE,
+	.flash_src  = &msm_flash_src
+};
+
+static struct msm_camera_sensor_info msm_camera_sensor_hi704_data = {
+	.sensor_name    = "hi704",
+	.sensor_reset   = 0,
+	.sensor_pwd     = 88,
+	.vcm_pwd        = 0,
+	.vcm_enable     = 0,
+	.pdata          = &msm_camera_device_data,
+	.flash_data     = &flash_hi704,
+};
+
+static struct platform_device msm_camera_sensor_hi704 = {
+	.name      = "msm_camera_hi704",
+	.dev       = {
+		.platform_data = &msm_camera_sensor_hi704_data,
+	},
+};
+#endif
+
 #ifdef CONFIG_MT9P012_KM
 static struct msm_camera_sensor_flash_data flash_mt9p012_km = {
 	.flash_type = MSM_CAMERA_FLASH_LED,
@@ -2032,6 +2067,7 @@ static struct platform_device msm_camera_sensor_vb6801 = {
 	},
 };
 #endif
+
 #ifdef CONFIG_MT9P111
 /*
  * Commented by zhang.shengjie
@@ -2536,6 +2572,10 @@ static struct platform_device *devices[] __initdata = {
      * For MT9V113: 0.3Mp, 1/11-Inch System-On-A-Chip (SOC) CMOS Digital Image Sensor
      */
     &msm_camera_sensor_mt9v113,
+#endif
+
+#ifdef CONFIG_HI704
+    &msm_camera_sensor_hi704,
 #endif
 
 #ifdef CONFIG_OV5642
